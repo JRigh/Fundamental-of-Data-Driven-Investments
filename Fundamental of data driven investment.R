@@ -5,11 +5,11 @@
 # lecture 1
 
 getwd()
-setwd("C:/Users/yjcla/Documents/R test")
+setwd("C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data-driven investments")
 
 #data folder 
-DIS <- read.csv(file = "C:/Users/yjcla/Documents/R test/Data/DIS.csv")
-DIS <- read.csv(file = "./Data/DIS - Copy.csv")
+DIS <- read.csv(file = "C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data-driven investments/DIS.csv")
+# DIS <- read.csv(file = "./Data/DIS - Copy.csv")
 #DIS <- read.csv(file = "./Data/DIS.csv", header = FALSE)
 
 
