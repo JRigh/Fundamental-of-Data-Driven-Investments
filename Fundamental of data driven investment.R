@@ -124,3 +124,80 @@ save(SP500, file = "C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data
 #----------
 # lecture 6
 #----------
+
+#dividendYield > 0.03
+
+SP500$port <- 0.6*SP500$annualReturn + 0.4*SP500$X10yearTyield
+SP500$indicator <- SP500$dividendYield > 0.03
+
+SP500$strat <- rep(0, dim(SP500)[1]) 
+
+for (i in 1:(dim(SP500)[1]-1)) {
+  if (SP500$dividendYield[i] > 0.03) {
+    SP500$strat[i+1] <- 0.8*SP500$annualReturn[i+1]+0.2*SP500$X10yearTyield[i+1]
+  } else {SP500$strat[i+1] <- 0.6*SP500$annualReturn[i+1]+0.4*SP500$X10yearTyield[i+1]
+  }
+}
+
+summary(SP500[,c("port","strat")])
+
+SP500$port.cr <- rep(NaN, dim(SP500)[1])
+SP500$strat.cr <- rep(NaN, dim(SP500)[1])
+
+for (i in 2:dim(SP500)[1]) {
+  SP500$port.cr[i] <- prod(1+SP500$port[2:i])-1
+  SP500$strat.cr[i] <- prod(1+SP500$strat[2:i])-1
+}
+
+plot(SP500$year[-1],SP500$port.cr[-1],type="l",col="blue", main="Cumulative Return", xlab="date", ylab = "cumulative return")
+lines(SP500$year[-1],SP500$strat.cr[-1], type="l", col="red")
+
+#----------
+# lecture 7
+#----------
+
+installed.packages()
+installed.packages()[,1]
+
+
+if(!("quantmod" %in% as.character(installed.packages()[,1])))
+{ install.packages("quantmod") } 
+
+library(quantmod)
+
+getSymbols(c("QQQ"),from = "2010-01-01",
+           periodicity = "monthly",auto.assign=TRUE)
+head(QQQ)
+is(QQQ)
+
+getSymbols(c("IVV","IDEV","IUSB","IEMG","IAGG","IJH","IJR")
+           ,from = "2012-01-01", to = "2019-12-31", periodicity = "daily")
+
+
+IVV
+
+index(IVV)
+is(index(IVV))
+
+dailyReturn(IVV$IVV.Adjusted)
+
+hist.return <- merge(dailyReturn(IVV$IVV.Adjusted),
+                     dailyReturn(IDEV$IDEV.Adjusted),
+                     dailyReturn(IUSB$IUSB.Adjusted),
+                     dailyReturn(IEMG$IEMG.Adjusted),
+                     dailyReturn(IAGG$IAGG.Adjusted),
+                     dailyReturn(IJH$IJH.Adjusted),
+                     dailyReturn(IJR$IJR.Adjusted)) 
+colnames(hist.return) <- c("IVV","IDEV","IUSB","IEMG","IAGG","IJH","IJR")
+
+#Daily cov and cor
+hist.return.cov <- cov(hist.return,use=c("complete.obs"))
+hist.return.cor <- cor(hist.return,use=c("complete.obs"))
+hist.return.cor
+
+#annual sd
+sqrt(diag(hist.return.cov))*sqrt(250)
+sd(hist.return$IDEV, na.rm=TRUE)*sqrt(250)
+
+
+save(hist.return, file = "./RData/hist.return.RData")
