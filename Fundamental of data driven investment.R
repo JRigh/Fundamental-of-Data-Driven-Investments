@@ -2,7 +2,9 @@
 # Fundamental of Data-driven investments
 #---------------------------------------
 
-# lecture 1
+#----------
+# lecture 3
+#----------
 
 getwd()
 setwd("C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data-driven investments")
@@ -60,3 +62,65 @@ head(DIS2000)
 tail(DIS2000)
 
 save(DIS, file = "./RData/DIS.RData")
+
+#----------
+# lecture 4
+#----------
+
+setwd("C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data-driven investments/")
+
+SP500 <- read.csv(file = "C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data-driven investments/SP500.csv")
+
+SP500$annualReturn <- c(NaN, (SP500$SP500level[-1]-SP500$SP500level[-dim(SP500)[1]])/SP500$SP500level[-dim(SP500)[1]])
+
+par(mar = c(5, 5, 3, 5))
+plot(SP500$year[-1], SP500$annualReturn[-1],type="l" ,col="blue", main="SP500 dividend yield & annual return",xlab="year", ylab="Annual return")
+par(new=TRUE)
+plot(SP500$dividendYield[-dim(SP500)[1]],type="l",xaxt = "n", yaxt = "n",
+     ylab = "", xlab = "", col = "red", lty = 2) 
+axis(side = 4)
+mtext("Dividend yield", side = 4, line = 3)
+legend("topleft", c("annual return", "dividend yield"),
+       col = c("blue", "red"), lty = c(1, 2))
+
+cor(SP500$annualReturn[-1], SP500$dividendYield[-dim(SP500)[1]])
+cor(SP500$annualReturn[-1], SP500$Peratio[-dim(SP500)[1]])
+cor(SP500$annualReturn[-1], SP500$ShillerPEratio[-dim(SP500)[1]])
+cor(SP500$annualReturn[-1], SP500$X10yearTyield[-1])
+
+#----------
+# lecture 5
+#----------
+
+summary(SP500[, c("annualReturn", "dividendYield")])
+
+summary(SP500$annualReturn[SP500$annualReturn > 0])
+summary(SP500$annualReturn[SP500$annualReturn < 0])
+
+
+hist(SP500$annualReturn, main="S&P500 Annual Return Histogram")
+
+qqnorm(SP500$annualReturn, 
+       ylab="S&P500 Annual Return", 
+       xlab="Normal Scores", 
+       main="S&P500 annual return normal probability plot") 
+qqline(SP500$annualReturn)
+
+
+DY.lm <- lm(SP500$annualReturn[-1] ~ SP500$dividendYield[-dim(SP500)[1]])
+DY.lm.summary <- summary(DY.lm)
+
+names(DY.lm.summary)
+DY.lm.summary$coefficients
+DY.lm.summary$coefficients[2,]
+data.frame((DY.lm.summary$coefficients[2,]),DY.lm.summary$adj.r.squared) 
+DY.output <- data.frame(t(DY.lm.summary$coefficients[2,]),DY.lm.summary$adj.r.squared) 
+DY.output
+colnames(DY.output) <- c("DY coefficient","std.error","t.value","p.value","adj.rsquared")
+DY.output
+
+save(SP500, file = "C:/Users/julia/OneDrive/Desktop/Coursera/Fundamental of data-driven investments/SP500.RData")
+
+#----------
+# lecture 6
+#----------
